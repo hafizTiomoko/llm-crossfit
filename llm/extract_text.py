@@ -11,7 +11,7 @@ from pdfplumber.page import Page
 from pdfplumber.pdf import PDF
 from memory_profiler import profile
 
-from llm import config
+import config
 
 
 logging.basicConfig(level=logging.INFO)
@@ -36,7 +36,7 @@ def extract(url: str, start_page: int, end_page: int,
     response = requests.get(url)
     content = io.BytesIO(response.content)
     with pdfplumber.open(content) as pdf:
-        pages = extract_text_from_pdf(pdf, start_page, end_page, header_height, footer_height)
+        pages = extract_text_from_pdf(pdf, start_page, end_page, header_height, footer_height, left_margin, right_margin)
     LOGGER.info(f'Finished extracting texts from {url}')
     to_jsonl(pages=pages, path=extraction_path)
 
@@ -63,7 +63,7 @@ def extract_text_from_pdf(pdf: PDF, start_page: int, end_page: int,
     for page in tqdm(pdf.pages):
         if page.page_number >= start_page and page.page_number <= end_page:
             yield page.page_number, extract_cropped_text_from_page(page=page, header_height=header_height, 
-                                                                   footer_height=footer_height, left_margin, right_margin)
+                                                                   footer_height=footer_height, left_margin=left_margin, right_margin=right_margin)
             # By default, pdfplumber keeps in cache to avoid to reprocess the same page, leading to memory issues.
             page.flush_cache()
 
