@@ -46,8 +46,10 @@ class LLMTolkien():
         model.config.use_cache = False  # silence warnings
         trainer.train()
         model.config.use_cache = True
-        model.push_to_hub(repo_id=hf_repo)
-        tokenizer.push_to_hub(repo_id=hf_repo)
+        model.save_pretrained(hf_repo)
+        tokenizer.save_pretrained(hf_repo)
+        #model.push_to_hub(repo_id=hf_repo)
+        #tokenizer.push_to_hub(repo_id=hf_repo)
 
     def evaluate():
         pass
