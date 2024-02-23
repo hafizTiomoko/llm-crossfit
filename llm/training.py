@@ -31,8 +31,10 @@ class LLMTolkien():
         ) -> None:
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map="auto", load_in_8bit=True)
+        print(model)
         model = prepare_model(model)
         model = get_peft_model(model, LoraConfig(**lora_config))
+        device = model.get_device()
         LOGGER.info(f"Model trainable parameters:\n {print_trainable_parameters(model)}")
         dataset = load_dataset(hf_repo)
         LOGGER.info(f"Train dataset downloaded:\n {dataset['train']}")
