@@ -4,7 +4,8 @@ from pathlib import Path
 REPO_DIR = Path(os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Text extraction
-url = 'http://library.crossfit.com/free/pdf/CFJ_English_Level1_TrainingGuide.pdf'
+url1 = 'http://library.crossfit.com/free/pdf/CFJ_English_Level1_TrainingGuide.pdf'
+url2 = 'https://library.crossfit.com/free/pdf/CFJ_English_L2_TrainingGuide.pdf'
 header_height = 60  # Main text distance from the top of the page: to remove header
 footer_height = 540 # Remove footer
 left_margin = 120

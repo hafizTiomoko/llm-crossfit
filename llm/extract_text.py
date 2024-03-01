@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
-def extract(url: str, start_page: int, end_page: int, 
+def extract(url1: str, url2: str, start_page: int, end_page: int, 
             header_height: int, footer_height: int, 
             left_margin:int, right_margin:int,
             extraction_path: Path) -> None:
@@ -32,13 +32,20 @@ def extract(url: str, start_page: int, end_page: int,
         header_height (int): header height in pixels
         footer_height (int): footer height in pixels
     """
-    LOGGER.info(f'Start extracting pages from {url}')
-    response = requests.get(url)
-    content = io.BytesIO(response.content)
-    with pdfplumber.open(content) as pdf:
-        pages = extract_text_from_pdf(pdf, start_page, end_page, header_height, footer_height, left_margin, right_margin)
-    LOGGER.info(f'Finished extracting texts from {url}')
-    to_jsonl(pages=pages, path=extraction_path)
+    LOGGER.info(f'Start extracting pages from {url1}')
+    response1 = requests.get(url1)
+    response2 = requests.get(url2)
+    content1 = io.BytesIO(response1.content)
+    content2 = io.BytesIO(response2.content)
+    with pdfplumber.open(content1) as pdf:
+        pages1 = extract_text_from_pdf(pdf, start_page, end_page, header_height, footer_height, left_margin, right_margin)
+    LOGGER.info(f'Finished extracting texts from {url1}')
+    with pdfplumber.open(content2) as pdf:
+        pages2= extract_text_from_pdf(pdf, 15, 80, 60, 740, 40, 540)
+    LOGGER.info(f'Finished extracting texts from {url2}')
+
+    to_jsonl(pages=pages1, path=extraction_path)
+    to_jsonl2(pages=pages2, path=extraction_path)
 
 
 def to_jsonl(pages: Iterator[Tuple[int, str]], path: Path) -> None:
@@ -51,6 +58,16 @@ def to_jsonl(pages: Iterator[Tuple[int, str]], path: Path) -> None:
             f.write('\n')
     LOGGER.info(f'Finished writing to {path}')
 
+def to_jsonl2(pages: Iterator[Tuple[int, str]], path: Path) -> None:
+    LOGGER.info(f'Start writing to {path}')
+    # We append text to the existing file with "a" mode (append)
+    with open(path, 'a') as f:
+        for page_number, text in tqdm(pages):  
+            page_number+=223
+            dict_page = {page_number: text}
+            json.dump(dict_page, f)
+            f.write('\n')
+    LOGGER.info(f'Finished writing to {path}')
 
 def extract_cropped_text_from_page(page: Page, header_height: int, footer_height: int, left_margin:int, right_margin:int) -> str:
     bbox = (left_margin, header_height, right_margin, footer_height) # Top-left corner, bottom-right corner
@@ -69,7 +86,8 @@ def extract_text_from_pdf(pdf: PDF, start_page: int, end_page: int,
 
 
 if __name__ == "__main__":
-    extract(url=config.url, 
+    extract(url1=config.url1, 
+            url2=config.url2,
             start_page=config.start_page, 
             end_page=config.end_page, 
             header_height=config.header_height, 
