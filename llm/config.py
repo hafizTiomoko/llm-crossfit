@@ -27,7 +27,7 @@ test_size = 0.1
 shuffle = True
 
 # Training
-model_name = 'google/gemma-2b' #'bigscience/bloom-3b'
+model_name = 'bigscience/bloom-3b' #'google/gemma-2b'
 lora_r = 16 # attention heads
 lora_alpha = 32 # alpha scaling
 lora_dropout = 0.05
