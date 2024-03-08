@@ -103,7 +103,7 @@ if __name__ == "__main__":
     lora_config = {
         "r": args.lora_r,
         "lora_alpha": args.lora_alpha,
-        "target_modules": ["q_proj", "v_proj"],
+        #"target_modules": ["q_proj", "v_proj"],
         "lora_dropout": args.lora_dropout, 
         'bias': args.lora_bias,
         "task_type": args.lora_task_type,
